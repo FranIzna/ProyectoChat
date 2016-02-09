@@ -27,10 +27,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private EditText et;
     private TextView tv;
     private boolean success;
+    private Tarea t;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        t=new Tarea();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         inicio();
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         });
     }
     public void inicio(){
+
         et = (EditText) findViewById(R.id.editText);
         tv = (TextView) findViewById(R.id.textView);
         Intent intent = new Intent();
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public void pasaTexto(View v){
             Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "es-ES");
-            i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Hablaahora");
+            i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Habla ahora");
             i.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS,3000);
             startActivityForResult(i, 2);
     }
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public void leer(){
         if(success) {
             String frase=et.getText().toString();
-            voz(frase);
+//            voz(frase);
 
             tv.append("\nYO: "+frase );
             et.setText("");
@@ -90,16 +93,15 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
         if(requestCode== 1) {
             ArrayList<String> textos = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            tv.setText(textos.get(0));
-            for (String s : textos) {
-                tv.append(s+"\n");
-            }
+            tv.append(textos.get(0));
+//            for (String s : textos) {
+//                tv.append(s+"\n");
+//            }
         }
         if(requestCode==2){
             ArrayList<String> textos = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            tv.setText("YO: "+textos.get(0));
-
-            Tarea t=new Tarea();
+            tv.append("YO: "+textos.get(0));
+Tarea t=new Tarea();
             t.execute(textos.get(0));
         }
     }
@@ -142,5 +144,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             tv.append("\nBOT: "+respuesta);
             voz(respuesta);
         }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+
     }
 }
